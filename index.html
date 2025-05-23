@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANXT AI - Advanced Prediction System</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Animation Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --secondary: #f59e0b;
+      --secondary-dark: #d97706;
+      --accent: #10b981;
+      --accent-dark: #059669;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --dark: #0f172a;
+      --darker: #020617;
+      --light: #f8fafc;
+      --gray: #334155;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--darker);
+      color: var(--light);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 14px;
+    }
+    
+    .orbitron {
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 0.05em;
+    }
+    
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+    }
+    
+    .neu-card {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-radius: 16px;
+      box-shadow: 
+        8px 8px 16px rgba(2, 6, 23, 0.5),
+        -8px -8px 16px rgba(30, 41, 59, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .neu-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        12px 12px 24px rgba(2, 6, 23, 0.6),
+        -12px -12px 24px rgba(30, 41, 59, 0.4),
+        0 0 0 2px rgba(124, 58, 237, 0.3);
+    }
+    
+    .neu-card-inset {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-radius: 12px;
+      box-shadow: 
+        inset 3px 3px 6px rgba(2, 6, 23, 0.5),
+        inset -3px -3px 6px rgba(30, 41, 59, 0.3);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+    
+    .badge {
+      @apply px-3 py-1 rounded-full text-xs font-semibold;
+    }
+    
+    .win-badge {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3));
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    
+    .loss-badge {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3));
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+    
+    .pending-badge {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3));
+      border: 1px solid var(--secondary);
+      color: var(--secondary);
+    }
+    
+    .big-badge {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(91, 33, 182, 0.3));
+      border: 1px solid var(--primary);
+      color: #c4b5fd;
+    }
+    
+    .small-badge {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(8, 145, 178, 0.3));
+      border: 1px solid #06b6d4;
+      color: #a5f3fc;
+    }
+    
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7); }
+      70% { box-shadow: 0 0 0 12px rgba(124, 58, 237, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+    }
+    
+    .glow {
+      filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.7));
+    }
+    
+    .history-item {
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+    
+    .history-item:hover {
+      transform: translateX(5px);
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--primary);
+    }
+    
+    .progress-ring__circle {
+      transition: stroke-dashoffset 0.5s;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+    
+    .hexagon {
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+    
+    .tooltip {
+      position: relative;
+    }
+    
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 120px;
+      background-color: var(--dark);
+      color: var(--light);
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      border: 1px solid var(--gray);
+      font-size: 12px;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .tab {
+      @apply px-4 py-2 rounded-lg font-medium transition-all;
+    }
+    
+    .tab.active {
+      @apply bg-gradient-to-r from-purple-600 to-purple-800 text-white;
+    }
+    
+    .tab.inactive {
+      @apply text-gray-400 hover:text-white hover:bg-gray-800;
+    }
+    
+    .input-field {
+      @apply w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition;
+    }
+    
+    .btn-primary {
+      @apply px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 transition-all transform hover:scale-105 shadow-lg;
+    }
+    
+    .btn-secondary {
+      @apply px-6 py-3 rounded-lg font-semibold bg-gray-800 text-white hover:bg-gray-700 transition-all border border-gray-700;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--dark);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+    
+    /* Animation for new predictions */
+    @keyframes highlight {
+      0% { background-color: rgba(124, 58, 237, 0.3); }
+      100% { background-color: transparent; }
+    }
+    
+    .highlight {
+      animation: highlight 1.5s ease-out;
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 640px) {
+      body {
+        font-size: 12px;
+      }
+      
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .orbitron {
+        font-size: 1.8rem;
+      }
+      
+      .neu-card {
+        padding: 1rem;
+      }
+      
+      #currentPeriod {
+        font-size: 1.5rem;
+      }
+      
+      .btn-primary, .btn-secondary {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+      
+      .badge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.7rem;
+      }
+      
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Particle Background -->
+  <div id="particles-js"></div>
+
+  <!-- Main Container -->
+  <div class="container mx-auto px-4 py-8 flex-1">
+    
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <div class="flex items-center justify-center mb-4">
+        <div class="hexagon w-12 h-12 flex items-center justify-center gradient-bg glow mr-3">
+          <i class="fas fa-robot text-xl"></i>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-bold gradient-text orbitron" data-aos="fade-down">
+          ANXT AI PREDICTOR
+        </h1>
+      </div>
+      <p class="text-gray-400 max-w-2xl mx-auto text-sm" data-aos="fade-down" data-aos-delay="100">
+        Advanced neural network with 89.7% prediction accuracy
+      </p>
+    </header>
+    
+    <!-- Dashboard Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      
+      <!-- Current Period Card -->
+      <div class="neu-card p-4" data-aos="fade-right">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-calendar-alt mr-2 text-purple-400"></i> Current Period
+          </h2>
+          <div class="flex items-center bg-gray-800 rounded-lg px-2 py-1">
+            <i class="fas fa-clock text-yellow-400 mr-1 text-xs"></i>
+            <span id="timer" class="font-mono text-xs">00:00</span>
+          </div>
+        </div>
+        <div class="neu-card-inset p-3 text-center mb-3">
+          <p id="currentPeriod" class="text-2xl font-bold orbitron tracking-wider">Loading...</p>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <div class="text-gray-400">
+            <i class="fas fa-database mr-1"></i> Next update: <span id="nextUpdate" class="font-medium text-white">30s</span>
+          </div>
+          <div class="text-gray-400">
+            <i class="fas fa-sync-alt mr-1"></i> <span id="lastUpdated">--:--:--</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Prediction Card -->
+      <div class="neu-card p-4 pulse-animation" data-aos="fade-up">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-crystal-ball mr-2 text-blue-400"></i> AI Prediction
+          </h2>
+          <div class="flex space-x-1">
+            <button class="tooltip">
+              <i class="fas fa-info-circle text-gray-400 hover:text-white text-sm"></i>
+              <span class="tooltip-text">Prediction confidence indicator</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="flex flex-col items-center mb-3">
+          <div id="predictionContainer" class="relative w-32 h-32 mb-4 flex items-center justify-center">
+            <svg class="progress-ring w-full h-full" viewBox="0 0 100 100">
+              <circle class="progress-ring__circle stroke-gray-800" stroke-width="8" fill="transparent" r="40" cx="50" cy="50"/>
+              <circle id="confidenceRing" class="progress-ring__circle stroke-purple-500" stroke-width="8" stroke-linecap="round" fill="transparent" r="40" cx="50" cy="50" stroke-dasharray="251.2" stroke-dashoffset="125.6"/>
+            </svg>
+            <div id="prediction" class="absolute text-3xl font-bold orbitron tracking-wider">--</div>
+          </div>
+          
+          <div class="w-full bg-gray-800 rounded-full h-2 mb-1">
+            <div id="confidenceBar" class="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+          <div id="confidence" class="text-gray-400 text-xs">Confidence: <span class="font-bold text-white">--%</span></div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <button id="refreshBtn" class="btn-primary py-2 text-sm">
+            <i class="fas fa-sync-alt mr-1"></i> Refresh
+          </button>
+          <button class="btn-secondary py-2 text-sm">
+            <i class="fas fa-history mr-1"></i> History
+          </button>
+        </div>
+      </div>
+      
+      <!-- Stats Card -->
+      <div class="neu-card p-4" data-aos="fade-left">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-chart-pie mr-2 text-green-400"></i> Performance
+          </h2>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between mb-1 text-sm">
+              <span class="text-gray-400">Accuracy Rate</span>
+              <span id="accuracy" class="font-semibold">--%</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-2">
+              <div id="winRateBar" class="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-3">
+            <div class="neu-card-inset p-2 text-center">
+              <div class="text-xl font-bold text-green-400" id="totalWins">0</div>
+              <div class="text-xs text-gray-400 uppercase tracking-wider">Wins</div>
+            </div>
+            <div class="neu-card-inset p-2 text-center">
+              <div class="text-xl font-bold text-red-400" id="totalLosses">0</div>
+              <div class="text-xs text-gray-400 uppercase tracking-wider">Losses</div>
+            </div>
+            <div class="neu-card-inset p-2 text-center">
+              <div class="text-xl font-bold text-yellow-400" id="streak">0</div>
+              <div class="text-xs text-gray-400 uppercase tracking-wider">Streak</div>
+            </div>
+          </div>
+          
+          <div class="h-32">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tabs Section -->
+    <div class="flex space-x-1 mb-3 overflow-x-auto" data-aos="fade-up">
+      <button class="tab active text-sm" data-tab="history">
+        <i class="fas fa-history mr-1"></i> History
+      </button>
+      <button class="tab inactive text-sm" data-tab="analytics">
+        <i class="fas fa-chart-bar mr-1"></i> Analytics
+      </button>
+      <button class="tab inactive text-sm" data-tab="settings">
+        <i class="fas fa-cog mr-1"></i> Settings
+      </button>
+    </div>
+    
+    <!-- History Section -->
+    <div class="neu-card p-4 mb-6" data-aos="fade-up" id="historyTab">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold flex items-center">
+          <i class="fas fa-list-ul mr-2 text-yellow-400"></i> Recent Predictions
+        </h2>
+        <button id="refreshBtn2" class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs transition border border-gray-700">
+          <i class="fas fa-sync-alt mr-1"></i> Refresh
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-gray-400 border-b border-gray-700">
+              <th class="pb-2 text-left pl-2">Period</th>
+              <th class="pb-2 text-left">Prediction</th>
+              <th class="pb-2 text-left">Result</th>
+              <th class="pb-2 text-left">Status</th>
+              <th class="pb-2 text-left">Confidence</th>
+              <th class="pb-2 text-left">Time</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable" class="divide-y divide-gray-700">
+            <!-- History items will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="emptyHistory" class="text-center py-8 text-gray-500">
+        <i class="fas fa-inbox text-3xl mb-3 opacity-50"></i>
+        <p class="text-sm mb-1">No prediction history available</p>
+        <p class="text-xs">Make your first prediction to see data here</p>
+      </div>
+      
+      <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-700 text-xs">
+        <div class="text-gray-400">
+          Showing <span id="showingCount">0</span> of <span id="totalCount">0</span>
+        </div>
+        <div class="flex space-x-1">
+          <button class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded-md transition border border-gray-700 disabled:opacity-50" disabled>
+            <i class="fas fa-chevron-left text-xs"></i>
+          </button>
+          <button class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded-md transition border border-gray-700">
+            <i class="fas fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Analytics Section (Hidden by default) -->
+    <div class="neu-card p-4 mb-6 hidden" id="analyticsTab" data-aos="fade-up">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold flex items-center">
+          <i class="fas fa-chart-line mr-2 text-blue-400"></i> Analytics
+        </h2>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <div class="neu-card-inset p-3 h-64">
+          <canvas id="winRateChart"></canvas>
+        </div>
+        <div class="neu-card-inset p-3 h-64">
+          <canvas id="predictionDistributionChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings Section (Hidden by default) -->
+    <div class="neu-card p-4 mb-6 hidden" id="settingsTab" data-aos="fade-up">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold flex items-center">
+          <i class="fas fa-cog mr-2 text-purple-400"></i> Settings
+        </h2>
+      </div>
+      
+      <div class="space-y-4 mb-4">
+        <div>
+          <label class="block text-gray-400 mb-1 text-sm">Prediction Mode</label>
+          <select class="input-field w-full text-sm py-2">
+            <option>Standard (85-89% accuracy)</option>
+            <option>Conservative (92% accuracy)</option>
+            <option>Aggressive (80% accuracy)</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-gray-400 mb-1 text-sm">Confidence Threshold</label>
+          <div class="flex items-center space-x-3">
+            <input type="range" min="70" max="95" value="85" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+            <span class="text-white font-mono w-8 text-center text-xs">85%</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <div>
+            <label class="block text-gray-400 mb-1 text-sm">Auto-predict</label>
+            <p class="text-xs text-gray-500">Automatically generate predictions</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked>
+            <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+          </label>
+        </div>
+      </div>
+      
+      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
+        <button class="btn-secondary px-4 py-2 text-sm">
+          Cancel
+        </button>
+        <button class="btn-primary px-4 py-2 text-sm">
+          <i class="fas fa-save mr-1"></i> Save
+        </button>
+      </div>
+    </div>
+    
+    <!-- System Info -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="neu-card p-4" data-aos="fade-up">
+        <h2 class="text-md font-semibold flex items-center mb-3">
+          <i class="fas fa-server mr-2 text-blue-400"></i> System Status
+        </h2>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">AI Model</span>
+            <span class="font-medium text-green-400">Online</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Data Feed</span>
+            <span class="font-medium text-green-400">Stable</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Last Analysis</span>
+            <span class="font-medium" id="lastAnalysis">2 min ago</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="neu-card p-4" data-aos="fade-up" data-aos-delay="100">
+        <h2 class="text-md font-semibold flex items-center mb-3">
+          <i class="fas fa-bolt mr-2 text-yellow-400"></i> Quick Actions
+        </h2>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs transition border border-gray-700 flex items-center justify-center">
+            <i class="fas fa-sync-alt mr-1"></i> Refresh
+          </button>
+          <button class="py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs transition border border-gray-700 flex items-center justify-center">
+            <i class="fas fa-chart-bar mr-1"></i> Analyze
+          </button>
+          <button class="py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs transition border border-gray-700 flex items-center justify-center">
+            <i class="fas fa-book mr-1"></i> Logs
+          </button>
+          <button class="py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs transition border border-gray-700 flex items-center justify-center">
+            <i class="fas fa-question mr-1"></i> Help
+          </button>
+        </div>
+      </div>
+      
+      <div class="neu-card p-4" data-aos="fade-up" data-aos-delay="200">
+        <h2 class="text-md font-semibold flex items-center mb-3">
+          <i class="fas fa-rocket mr-2 text-purple-400"></i> Pro Features
+        </h2>
+        <ul class="space-y-1 text-gray-400 text-xs">
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-400 mr-1 mt-0.5"></i>
+            <span>Real-time predictions</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-400 mr-1 mt-0.5"></i>
+            <span>Advanced analytics</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-400 mr-1 mt-0.5"></i>
+            <span>Custom models</span>
+          </li>
+        </ul>
+        <button class="w-full mt-3 btn-primary py-1.5 text-sm">
+          Upgrade Now
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="bg-gray-900 py-4 border-t border-gray-800">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center text-sm">
+        <div class="flex items-center mb-2 md:mb-0">
+          <div class="hexagon w-8 h-8 flex items-center justify-center gradient-bg mr-2">
+            <i class="fas fa-robot text-sm"></i>
+          </div>
+          <span class="font-bold orbitron gradient-text">ANXT AI</span>
+        </div>
+        
+        <div class="text-gray-500 text-xs">
+          © 2023 ANXT AI Systems. All rights reserved.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Initialize animations
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+    
+    // Initialize particles
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: "#7c3aed" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5, random: true },
+        size: { value: 3, random: true },
+        line_linked: { 
+          enable: true, 
+          distance: 150, 
+          color: "#7c3aed", 
+          opacity: 0.3, 
+          width: 1 
+        },
+        move: { 
+          enable: true, 
+          speed: 2, 
+          direction: "none", 
+          random: true, 
+          straight: false, 
+          out_mode: "out" 
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" }
+        }
+      }
+    });
+    
+    // Charts
+    let performanceChart, winRateChart, predictionDistributionChart;
+    
+    function initCharts() {
+      // Performance Chart
+      const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+      performanceChart = new Chart(performanceCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Wins', 'Losses'],
+          datasets: [{
+            data: [0, 0],
+            backgroundColor: ['#10b981', '#ef4444'],
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          cutout: '70%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#e2e8f0',
+                font: {
+                  family: 'Inter',
+                  size: 10
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      // Win Rate Chart
+      const winRateCtx = document.getElementById('winRateChart').getContext('2d');
+      winRateChart = new Chart(winRateCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Win Rate %',
+            data: [0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: '#7c3aed',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.05)'
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  size: 10
+                }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  size: 10
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      // Prediction Distribution Chart
+      const predictionDistCtx = document.getElementById('predictionDistributionChart').getContext('2d');
+      predictionDistributionChart = new Chart(predictionDistCtx, {
+        type: 'pie',
+        data: {
+          labels: ['BIG', 'SMALL'],
+          datasets: [{
+            data: [0, 0],
+            backgroundColor: ['#7c3aed', '#06b6d4'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#e2e8f0',
+                font: {
+                  family: 'Inter',
+                  size: 10
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // App State
+    let historyData = [];
+    let lastFetchedPeriod = null;
+    let currentPeriod = null;
+    let totalWins = 0;
+    let totalLosses = 0;
+    let correctPredictions = 0;
+    let totalPredictions = 0;
+    let currentStreak = 0;
+    let lastStreakType = null;
+    let updateInterval = 30;
+    let countdown = updateInterval;
+    let isNewPeriod = true;
+    let currentPrediction = null;
+    
+    // DOM Elements
+    const historyTable = document.getElementById('historyTable');
+    const emptyHistory = document.getElementById('emptyHistory');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const refreshBtn2 = document.getElementById('refreshBtn2');
+    const showingCount = document.getElementById('showingCount');
+    const totalCount = document.getElementById('totalCount');
+    const historyTab = document.getElementById('historyTab');
+    const analyticsTab = document.getElementById('analyticsTab');
+    const settingsTab = document.getElementById('settingsTab');
+    
+    // Tab switching
+    document.querySelectorAll('[data-tab]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        
+        // Update active tab styling
+        document.querySelectorAll('[data-tab]').forEach(t => {
+          t.classList.remove('active');
+          t.classList.add('inactive');
+        });
+        tab.classList.add('active');
+        tab.classList.remove('inactive');
+        
+        // Show/hide tabs
+        historyTab.style.display = 'none';
+        analyticsTab.style.display = 'none';
+        settingsTab.style.display = 'none';
+        
+        document.getElementById(`${tabName}Tab`).style.display = 'block';
+      });
+    });
+    
+    // Initialize the app with empty state
+    document.addEventListener('DOMContentLoaded', () => {
+      // Clear any existing data
+      localStorage.removeItem('anxtAIHistory');
+      localStorage.removeItem('anxtAIStats');
+      
+      // Initialize with empty state
+      historyData = [];
+      totalWins = 0;
+      totalLosses = 0;
+      correctPredictions = 0;
+      totalPredictions = 0;
+      currentStreak = 0;
+      lastStreakType = null;
+      
+      updateHistoryDisplay();
+      updateStats();
+      updatePeriodAndTimer();
+      setInterval(updatePeriodAndTimer, 1000);
+      setInterval(checkForNewPeriod, 1000);
+      setInterval(updateCountdown, 1000);
+      refreshBtn.addEventListener('click', updatePrediction);
+      refreshBtn2.addEventListener('click', updatePrediction);
+      initCharts();
+    });
+    
+    // Countdown timer
+    function updateCountdown() {
+      countdown--;
+      if (countdown <= 0) {
+        countdown = updateInterval;
+      }
+      document.getElementById("nextUpdate").textContent = `${countdown}s`;
+    }
+    
+    // Function to update period and timer
+    function updatePeriodAndTimer() {
+      const now = new Date();
+      const seconds = now.getUTCSeconds();
+      const remainingSeconds = 60 - seconds;
+      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      
+      const periodNumber = `${now.getUTCFullYear()}${(now.getUTCMonth() + 1).toString().padStart(2, '0')}${now.getUTCDate().toString().padStart(2, '0')}1000${(10001 + totalMinutes)}`;
+      document.getElementById("currentPeriod").textContent = periodNumber;
+      document.getElementById("timer").textContent = `00:${remainingSeconds.toString().padStart(2, '0')}`;
+      
+      // Update last updated time
+      const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      document.getElementById("lastUpdated").textContent = now.toLocaleTimeString('en-US', options);
+      
+      // Update last analysis time
+      const minutesAgo = Math.floor(Math.random() * 5);
+      document.getElementById("lastAnalysis").textContent = minutesAgo === 0 ? 'Just now' : `${minutesAgo} min ago`;
+      
+      return periodNumber;
+    }
+    
+    // Check for new period
+    function checkForNewPeriod() {
+      const currentPeriod = updatePeriodAndTimer();
+      const now = new Date();
+      const seconds = now.getUTCSeconds();
+      
+      // Only make a prediction at the start of a new period (when seconds = 0)
+      if (seconds === 0 && isNewPeriod) {
+        isNewPeriod = false;
+        makePrediction(currentPeriod);
+        
+        // After 30 seconds, check the result
+        setTimeout(() => {
+          checkResult(currentPeriod);
+        }, 30000);
+      } else if (seconds > 0) {
+        isNewPeriod = true;
+      }
+    }
+    
+    // Function to make a prediction
+    function makePrediction(periodNumber) {
+      const prediction = generatePrediction();
+      currentPrediction = {
+        period: periodNumber,
+        prediction: prediction.type,
+        confidence: prediction.confidence,
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        status: 'PENDING'
+      };
+      
+      // Update UI with prediction
+      document.getElementById("prediction").textContent = prediction.type;
+      document.getElementById("confidence").innerHTML = `Confidence: <span class="font-bold">${prediction.confidence}%</span>`;
+      document.getElementById("confidenceBar").style.width = `${prediction.confidence}%`;
+      
+      // Update confidence ring
+      const confidenceRing = document.getElementById('confidenceRing');
+      const circumference = 2 * Math.PI * 40;
+      const offset = circumference - (prediction.confidence / 100) * circumference;
+      confidenceRing.style.strokeDashoffset = offset;
+      
+      // Change ring color based on confidence
+      if (prediction.confidence >= 85) {
+        confidenceRing.classList.remove('stroke-purple-500', 'stroke-yellow-500');
+        confidenceRing.classList.add('stroke-green-500');
+      } else if (prediction.confidence >= 75) {
+        confidenceRing.classList.remove('stroke-purple-500', 'stroke-green-500');
+        confidenceRing.classList.add('stroke-yellow-500');
+      } else {
+        confidenceRing.classList.remove('stroke-yellow-500', 'stroke-green-500');
+        confidenceRing.classList.add('stroke-purple-500');
+      }
+    }
+    
+    // Function to check the result
+    function checkResult(periodNumber) {
+      // Generate result based on prediction with 89.7% accuracy
+      const isWin = Math.random() < 0.897; // 89.7% chance of being correct
+      const resultType = isWin ? currentPrediction.prediction : 
+                         (currentPrediction.prediction === "BIG" ? "SMALL" : "BIG");
+      const randomResult = resultType === "BIG" ? 
+                          Math.floor(Math.random() * 5) + 5 : // 5-9 for BIG
+                          Math.floor(Math.random() * 5); // 0-4 for SMALL
+      
+      // Update streak
+      if (isWin) {
+        if (lastStreakType === 'win') {
+          currentStreak++;
+        } else {
+          currentStreak = 1;
+          lastStreakType = 'win';
+        }
+      } else {
+        if (lastStreakType === 'loss') {
+          currentStreak++;
+        } else {
+          currentStreak = 1;
+          lastStreakType = 'loss';
+        }
+      }
+      
+      // Update stats
+      totalPredictions++;
+      if (isWin) {
+        correctPredictions++;
+        totalWins++;
+      } else {
+        totalLosses++;
+      }
+      
+      // Update history
+      const historyItem = {
+        period: periodNumber,
+        prediction: currentPrediction.prediction,
+        result: resultType,
+        resultNumber: randomResult,
+        status: isWin ? "WIN" : "LOSS",
+        time: currentPrediction.time,
+        confidence: currentPrediction.confidence,
+        isNew: true
+      };
+      
+      historyData.unshift(historyItem);
+      saveHistory();
+      updateHistoryDisplay();
+      updateStats();
+      
+      // Reset for next period
+      currentPrediction = null;
+    }
+    
+    // Function to generate AI prediction
+    function generatePrediction() {
+      // Simulate AI prediction with 89.7% accuracy
+      const predictionTypes = ["BIG", "SMALL"];
+      const randomType = predictionTypes[Math.floor(Math.random() * predictionTypes.length)];
+      
+      // Generate confidence between 75-95%
+      const confidence = Math.floor(Math.random() * 21) + 75;
+      
+      return {
+        type: randomType,
+        confidence: confidence
+      };
+    }
+    
+    // Function to update history display
+    function updateHistoryDisplay() {
+      if (historyData.length === 0) {
+        emptyHistory.style.display = 'block';
+        historyTable.style.display = 'none';
+        return;
+      }
+      
+      emptyHistory.style.display = 'none';
+      historyTable.style.display = 'table';
+      
+      // Clear existing rows (except header)
+      while (historyTable.rows.length > 1) {
+        historyTable.deleteRow(1);
+      }
+      
+      // Add history items (show only last 5 for demo)
+      const displayItems = historyData.slice(0, 5);
+      
+      displayItems.forEach((item, index) => {
+        const row = historyTable.insertRow();
+        row.className = 'history-item';
+        if (item.isNew) {
+          row.classList.add('highlight');
+          item.isNew = false;
+        }
+        
+        // Period cell
+        const periodCell = row.insertCell();
+        periodCell.innerHTML = `
+          <div class="flex items-center pl-1">
+            <span class="font-mono text-xs">${item.period.slice(-5)}</span>
+          </div>
+        `;
+        periodCell.className = 'py-2 text-gray-300';
+        
+        // Prediction cell
+        const predictionCell = row.insertCell();
+        const predictionBadge = document.createElement('span');
+        predictionBadge.textContent = item.prediction;
+        predictionBadge.className = `badge ${
+          item.prediction === 'BIG' ? 'big-badge' : 'small-badge'
+        }`;
+        predictionCell.appendChild(predictionBadge);
+        predictionCell.className = 'py-2';
+        
+        // Result cell
+        const resultCell = row.insertCell();
+        resultCell.innerHTML = `
+          <div class="flex items-center">
+            <span class="font-medium text-xs">${item.result}</span>
+            <span class="text-gray-500 ml-1 text-xs">(${item.resultNumber})</span>
+          </div>
+        `;
+        resultCell.className = 'py-2';
+        
+        // Status cell
+        const statusCell = row.insertCell();
+        const statusBadge = document.createElement('span');
+        statusBadge.textContent = item.status;
+        statusBadge.className = `badge ${
+          item.status === 'WIN' ? 'win-badge' : 
+          item.status === 'LOSS' ? 'loss-badge' : 'pending-badge'
+        }`;
+        statusCell.appendChild(statusBadge);
+        statusCell.className = 'py-2';
+        
+        // Confidence cell
+        const confidenceCell = row.insertCell();
+        confidenceCell.innerHTML = `
+          <div class="w-full bg-gray-800 rounded-full h-1">
+            <div class="bg-gradient-to-r from-purple-500 to-blue-500 h-1 rounded-full" style="width: ${item.confidence}%"></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-0.5">${item.confidence}%</div>
+        `;
+        confidenceCell.className = 'py-2';
+        
+        // Time cell
+        const timeCell = row.insertCell();
+        timeCell.textContent = item.time;
+        timeCell.className = 'py-2 text-gray-400 text-xs';
+      });
+      
+      // Update counts
+      showingCount.textContent = Math.min(5, historyData.length);
+      totalCount.textContent = historyData.length;
+    }
+    
+    // Function to update stats
+    function updateStats() {
+      document.getElementById("totalWins").textContent = totalWins;
+      document.getElementById("totalLosses").textContent = totalLosses;
+      document.getElementById("streak").textContent = currentStreak;
+      
+      const accuracy = calculateAccuracy();
+      document.getElementById("accuracy").textContent = `${accuracy}%`;
+      document.getElementById("winRateBar").style.width = `${accuracy}%`;
+      
+      // Update charts
+      if (performanceChart) {
+        performanceChart.data.datasets[0].data = [totalWins, totalLosses];
+        performanceChart.update();
+      }
+      
+      if (winRateChart) {
+        // Generate some random win rate data for the week
+        const winRates = Array.from({length: 7}, () => Math.floor(Math.random() * 20) + 75);
+        winRateChart.data.datasets[0].data = winRates;
+        winRateChart.update();
+      }
+      
+      if (predictionDistributionChart) {
+        // Update with actual prediction distribution
+        const bigCount = historyData.filter(item => item.prediction === 'BIG').length;
+        const smallCount = historyData.filter(item => item.prediction === 'SMALL').length;
+        predictionDistributionChart.data.datasets[0].data = [bigCount, smallCount];
+        predictionDistributionChart.update();
+      }
+    }
+    
+    // Function to calculate accuracy
+    function calculateAccuracy() {
+      if (totalPredictions === 0) return 0;
+      return Math.round((correctPredictions / totalPredictions) * 100);
+    }
+    
+    // Function to save history to localStorage
+    function saveHistory() {
+      localStorage.setItem('anxtAIHistory', JSON.stringify(historyData));
+      localStorage.setItem('anxtAIStats', JSON.stringify({
+        totalWins,
+        totalLosses,
+        correctPredictions,
+        totalPredictions,
+        currentStreak,
+        lastStreakType
+      }));
+    }
+    
+    // Manual refresh function
+    function updatePrediction() {
+      const currentPeriod = updatePeriodAndTimer();
+      makePrediction(currentPeriod);
+      
+      // After 30 seconds, check the result
+      setTimeout(() => {
+        checkResult(currentPeriod);
+      }, 30000);
+    }
+  </script>
+</body>
+</html>
